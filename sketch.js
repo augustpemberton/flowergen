@@ -113,6 +113,9 @@ function setup() {
   }, 100);
 
   //load default preset
+  // then save and load again to ensure there is a default preset
+  loadPreset(68);
+  savePreset(68);
   loadPreset(68);
 }
 
@@ -311,10 +314,12 @@ function loadPreset(keycode) {
 
 function keyPressed() {
   if (keyIsDown(ALT)) savePreset(keyCode);
-  else if (key == 'c') flowers = [];
-  else loadPreset(keyCode);
-
+  else if (isLetter(key)) loadPreset(keyCode);
   draw();
+}
+
+function isLetter(str) {
+  return str.length === 1 && str.match(/[a-z]/i);
 }
 
 function mouseDown() {
