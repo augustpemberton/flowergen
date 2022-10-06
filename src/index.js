@@ -117,7 +117,7 @@ function setupGUI() {
 
     p5.frameRate(60);
 
-    font = p5.loadFont('fonts/MSMincho.ttf');
+    font = p5.loadFont('fonts/msmincho.otf');
 
     setupGUI();
 
