@@ -6,8 +6,8 @@ let canvas;
 
 let params = {
   flower: {
-    flowerSizeX: 0.2, flowerSizeXMin: 0, flowerSizeXMax: 0.5, flowerSizeXStep: 0.001,
-    flowerSizeY: 0.1, flowerSizeYMin: 0, flowerSizeYMax: 0.5, flowerSizeYStep: 0.001,
+    flowerSizeX: 0.21, flowerSizeXMin: 0, flowerSizeXMax: 0.5, flowerSizeXStep: 0.001,
+    flowerSizeY: 0.17, flowerSizeYMin: 0, flowerSizeYMax: 0.5, flowerSizeYStep: 0.001,
 
     nPetals: 9, nPetalsMin: 1, nPetalsMax: 20, nPetalsStep: 1,
 
