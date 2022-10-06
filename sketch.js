@@ -72,7 +72,6 @@ let flowers = [];
 function preload() {
   blurShader = loadShader('shaders/blur.vert', 'shaders/blur.frag');
   unsharpShader = loadShader('shaders/unsharp.vert', 'shaders/unsharp.frag');
-  font = loadFont('fonts/MSMincho.ttf');
 }
 
 function showMessage(text, time=2000) {
@@ -106,6 +105,7 @@ function setup() {
   displayGui.addObject(params.display);
   displayGui.setPosition(20, height - 450);
 
+  font = loadFont('fonts/MSMincho.ttf');
 
   setInterval(() => {
     if (showStatusTextCountdown > 0)
