@@ -36,8 +36,8 @@ let params = {
   display: {
     scribbleRoughness: 1.3, scribbleRoughnessMin: 0, scribbleRoughnessMax: 10, scribbleRoughnessStep: 0.1,
 
-    blurRadius: 0.5, blurRadiusMin: 0, blurRadiusMax: 3, blurRadiusStep: 0.01,
-    blurIterations: 3, blurIterationsMin: 0, blurIterationsMax: 20, blurIterationsStep: 1,
+    blurRadius: 0.5, blurRadiusMin: 0, blurRadiusMax: 2, blurRadiusStep: 0.01,
+    blurIterations: 3, blurIterationsMin: 0, blurIterationsMax: 5, blurIterationsStep: 1,
 
     unsharpAmount: 50, unsharpAmountMin: 0, unsharpAmountMax: 200, unsharpAmountStep: 1,
     unsharpThreshold: 0.4, unsharpThresholdMin: 0, unsharpThresholdMax: 10, unsharpThresholdStep: 0.1,

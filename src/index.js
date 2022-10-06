@@ -63,7 +63,7 @@ const sketch = p5 => {
       loadCompressedState(p.state);
     }
 
-    p5.frameRate(60);
+    p5.frameRate(15);
 
     font = p5.loadFont('fonts/msmincho.otf');
 
@@ -199,8 +199,8 @@ const sketch = p5 => {
 
   function drawFlowers(buffer) {
     let scribble = new Scribble(buffer);
-    scribble.numEllipseSteps = 10;
-    scribble.bowing = 4;
+    scribble.numEllipseSteps = 1;
+    scribble.bowing = 1;
     scribble.roughness = params.display.scribbleRoughness;
 
     for (var flower of flowers) {
@@ -233,6 +233,7 @@ const sketch = p5 => {
         flower.fillAlpha);
 
       scribble.scribbleEllipse(petalPos.x, petalPos.y, petalSize.x, petalSize.y);
+      //scribbleBuffer.ellipse(petalPos.x, petalPos.y, petalSize.x, petalSize.y);
 
       if (petal.showCentre) {
         p5.push();
@@ -301,8 +302,8 @@ const sketch = p5 => {
   }
 
   function mouseDown() {
-    flowers.push(createFlower());
-    p5.draw();
+    //flowers.push(createFlower());
+    //p5.draw();
   }
 
   function createFlower(pos) {
