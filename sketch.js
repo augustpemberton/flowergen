@@ -38,7 +38,7 @@ let params = {
     centreOffsetX: 0.04, centreOffsetXMin: -1, centreOffsetXMax: 2, centreOffsetXStep: 0.001,
     centreOffsetY: 0.05, centreOffsetYMin: -1, centreOffsetYMax: 2, centreOffsetYStep: 0.001,
 
-    centreSize: 0.01, centreSizeMin: 0.001, centreSizeMax: 0.01, centreSizeStep: 0.0001,
+    centreSize: 0.01, centreSizeMin: 0.001, centreSizeMax: 0.1, centreSizeStep: 0.0001,
   },
 
   display: {
