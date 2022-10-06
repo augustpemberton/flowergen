@@ -173,8 +173,9 @@ const sketch = p5 => {
       scribbleBuffer.text("ower", left + 190, 90);
 
       scribbleBuffer.textSize(24);
-      scribbleBuffer.text("[ALT]+{letter} to save a flower", p5.width - 500, p5.height - 40);
-      scribbleBuffer.text("{letter} to load a flower", p5.width - 500, p5.height - 70);
+      scribbleBuffer.text("{letter} to load a flower", p5.width - 500, p5.height - 100);
+      scribbleBuffer.text("[ALT]+{letter} to save a flower", p5.width - 500, p5.height - 70);
+      scribbleBuffer.text("browser back/forward to undo/redo", p5.width - 500, p5.height - 40);
       if (showStatusTextCountdown > 0)
         scribbleBuffer.text(statusText, 300, p5.height - 70);
 
