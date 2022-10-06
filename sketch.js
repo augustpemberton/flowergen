@@ -304,6 +304,8 @@ function loadPreset(keycode) {
       }
     }
     showMessage("loaded " + String.fromCharCode(keycode));
+  } else {
+    showMessage(String.fromCharCode(keycode) + " is empty");
   }
 }
 
