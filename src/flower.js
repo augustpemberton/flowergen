@@ -15,6 +15,8 @@ class Flower {
         this.size = size;
         this.petals = petals;
 
-        this.seed = random(0, 100);
+        this.seed = p5.random(0, 100);
     }
 }
+
+export {Petal, Flower};
