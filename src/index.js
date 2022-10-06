@@ -1,7 +1,7 @@
 import p5 from "p5";
 import * as dat from 'dat.gui';
 import {Petal, Flower} from "./flower"
-import { encode, decode } from "@msgpack/msgpack";
+import Msgpack from 'msgpack-lite'
 
 let params = {
   flower: {
@@ -128,13 +128,32 @@ function setupGUI() {
   }
 
   function getCompressedState() {
-    let b64 = window.btoa(JSON.stringify(params));
-    return encodeURIComponent(b64);
+    let strippedParams = {};
+
+    for (const [name, param] of Object.entries(params)) {
+      strippedParams[name] = [];
+      for (const [key, value] of Object.entries(param)) {
+        if (!key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step")) {
+          strippedParams[name].push(value);
+        }
+      }
+    }
+
+    return window.btoa(JSON.stringify(strippedParams));
   }
 
   function loadCompressedState(state) {
-    let b64 = decodeURIComponent(state);
-    params = JSON.parse(window.atob(b64));
+    let strippedParams = JSON.parse(window.atob(state));
+    for (const [name, param] of Object.entries(strippedParams)) {
+      let i=0;
+      for (const [key, value] of Object.entries(params[name])) {
+        if (!key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step")) {
+          params[name][key] = param[i];
+          console.log(name + "." + key + " = " + param[i]);
+          i++;
+        }
+      }
+    }
   }
 
   function postProcess() {
@@ -172,27 +191,30 @@ function setupGUI() {
     flowers = [createFlower(new p5.createVector(p5.width / 2, p5.height / 2))];
     drawFlowers(scribbleBuffer);
 
-    scribbleBuffer.textFont(font);
-    scribbleBuffer.fill(params.flower.flowerStroke);
+    if (typeof font !== 'undefined') {
+      scribbleBuffer.textFont(font);
 
-    let left = p5.width / 2 - 140;
+      scribbleBuffer.fill(params.flower.flowerStroke);
 
-    scribbleBuffer.textSize(80);
-    scribbleBuffer.text("F", left, 90);
-    scribbleBuffer.textSize(40);
-    scribbleBuffer.text("lower", left + 30, 90);
+      let left = p5.width / 2 - 140;
 
-    scribbleBuffer.textSize(80);
-    scribbleBuffer.text("P", left + 160, 90);
-    scribbleBuffer.textSize(40);
-    scribbleBuffer.text("ower", left + 190, 90);
+      scribbleBuffer.textSize(80);
+      scribbleBuffer.text("F", left, 90);
+      scribbleBuffer.textSize(40);
+      scribbleBuffer.text("lower", left + 30, 90);
 
-    scribbleBuffer.textSize(24);
-    scribbleBuffer.text("[ALT]+{letter} to save a flower", p5.width - 500, p5.height - 40);
-    scribbleBuffer.text("{letter} to load a flower", p5.width - 500, p5.height - 70);
-    if (showStatusTextCountdown > 0)
-      scribbleBuffer.text(statusText, 300, p5.height - 70);
+      scribbleBuffer.textSize(80);
+      scribbleBuffer.text("P", left + 160, 90);
+      scribbleBuffer.textSize(40);
+      scribbleBuffer.text("ower", left + 190, 90);
 
+      scribbleBuffer.textSize(24);
+      scribbleBuffer.text("[ALT]+{letter} to save a flower", p5.width - 500, p5.height - 40);
+      scribbleBuffer.text("{letter} to load a flower", p5.width - 500, p5.height - 70);
+      if (showStatusTextCountdown > 0)
+        scribbleBuffer.text(statusText, 300, p5.height - 70);
+
+    }
 
     postProcess();
 
