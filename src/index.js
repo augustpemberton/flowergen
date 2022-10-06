@@ -128,31 +128,38 @@ function setupGUI() {
   }
 
   function getCompressedState() {
-    let strippedParams = {};
+    let strippedParams = [];
 
+    let i=0;
     for (const [name, param] of Object.entries(params)) {
-      strippedParams[name] = [];
+      strippedParams.push([]);
       for (const [key, value] of Object.entries(param)) {
         if (!key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step")) {
-          strippedParams[name].push(value);
+          strippedParams[i].push(value);
         }
       }
+      i++;
     }
 
-    return window.btoa(JSON.stringify(strippedParams));
+    console.log(JSON.stringify(strippedParams));
+
+    return window.btoa(JSON.stringify(strippedParams, (key, val) => {
+      return val.toFixed ? Number(val.toFixed(3)) : val
+    }));
   }
 
   function loadCompressedState(state) {
     let strippedParams = JSON.parse(window.atob(state));
-    for (const [name, param] of Object.entries(strippedParams)) {
+    let n=0;
+    for (const [name, param] of Object.entries(params)) {
       let i=0;
       for (const [key, value] of Object.entries(params[name])) {
         if (!key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step")) {
-          params[name][key] = param[i];
-          console.log(name + "." + key + " = " + param[i]);
+          params[name][key] = strippedParams[n][i];
           i++;
         }
       }
+      n++;
     }
   }
 
