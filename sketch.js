@@ -14,7 +14,7 @@ let params = {
     flowerStroke: [84, 109, 115],
     flowerStrokeAlpha: 255, flowerStrokeAlphaMin: 0, flowerStrokeAlphaMax: 255, flowerStrokeAlphaStep: 1,
     flowerFill: [108, 157, 141],
-    flowerFillAlpha: 9, flowerFillAlphaMin: 0, flowerFillAlphaMax: 255, flowerFillAlphaStep: 1,
+    flowerFillAlpha: 0, flowerFillAlphaMin: 0, flowerFillAlphaMax: 255, flowerFillAlphaStep: 1,
 
     flowerRandSeed: 146, flowerRandSeedMin: 0, flowerRandSeedMax: 10000, flowerRandSeedStep: 0.001,
   },
