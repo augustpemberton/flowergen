@@ -132,6 +132,8 @@ const sketch = p5 => {
     unsharpShader.setUniform('amount', params.display.unsharpAmount);
     unsharpShader.setUniform('threshold', params.display.unsharpThreshold);
     scribbleBuffer.rect(0, 0, p5.width, p5.height);
+
+    scribbleBuffer.resetShader();
   }
 
   p5.draw = () => {
@@ -171,7 +173,7 @@ const sketch = p5 => {
 
     }
 
-    postProcess();
+    if (params.display.postProcess) postProcess();
 
     p5.clear();
     //blend(scribbleBuffer, -width/2, -height/2, width, height, 0, 0, width, height, SCREEN);
