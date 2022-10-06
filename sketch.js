@@ -6,51 +6,51 @@ let canvas;
 
 let params = {
   flower: {
-    flowerSizeX: 0.1, flowerSizeXMin: 0, flowerSizeXMax: 0.5, flowerSizeXStep: 0.001,
+    flowerSizeX: 0.2, flowerSizeXMin: 0, flowerSizeXMax: 0.5, flowerSizeXStep: 0.001,
     flowerSizeY: 0.1, flowerSizeYMin: 0, flowerSizeYMax: 0.5, flowerSizeYStep: 0.001,
 
-    nPetals: 5, nPetalsMin: 1, nPetalsMax: 20, nPetalsStep: 1,
+    nPetals: 9, nPetalsMin: 1, nPetalsMax: 20, nPetalsStep: 1,
 
-    flowerStroke: [255, 255, 255],
+    flowerStroke: [84, 109, 115],
     flowerStrokeAlpha: 255, flowerStrokeAlphaMin: 0, flowerStrokeAlphaMax: 255, flowerStrokeAlphaStep: 1,
-    flowerFill: [100, 100, 100],
-    flowerFillAlpha: 255, flowerFillAlphaMin: 0, flowerFillAlphaMax: 255, flowerFillAlphaStep: 1,
+    flowerFill: [108, 157, 141],
+    flowerFillAlpha: 9, flowerFillAlphaMin: 0, flowerFillAlphaMax: 255, flowerFillAlphaStep: 1,
 
-    flowerRandSeed: 1, flowerRandSeedMin: 0, flowerRandSeedMax: 10000, flowerRandSeedStep: 0.001,
+    flowerRandSeed: 146, flowerRandSeedMin: 0, flowerRandSeedMax: 10000, flowerRandSeedStep: 0.001,
   },
 
   petal: {
-    petalOffsetX: 0.1, petalOffsetXMin: 0, petalOffsetXMax: 2, petalOffsetXStep: 0.001,
-    petalOffsetY: 0.1, petalOffsetYMin: 0, petalOffsetYMax: 2, petalOffsetYStep: 0.001,
-    petalOffsetRand: 0.1, petalOffsetRandMin: 0, petalOffsetRandMax: 2, petalOffsetRandStep: 0.001,
+    petalOffsetX: 0.286, petalOffsetXMin: 0, petalOffsetXMax: 2, petalOffsetXStep: 0.001,
+    petalOffsetY: 0, petalOffsetYMin: 0, petalOffsetYMax: 2, petalOffsetYStep: 0.001,
+    petalOffsetRand: 0.075, petalOffsetRandMin: 0, petalOffsetRandMax: 2, petalOffsetRandStep: 0.001,
 
-    petalSizeX: 0.1, petalSizeXMin: 0, petalSizeXMax: 2, petalSizeXStep: 0.001,
-    petalSizeY: 0.1, petalSizeYMin: 0, petalSizeYMax: 2, petalSizeYStep: 0.001,
-    petalSizeRand: 0.1, petalSizeRandMin: 0, petalSizeRandMax: 2, petalSizeRandStep: 0.001,
+    petalSizeX: 0.726, petalSizeXMin: 0, petalSizeXMax: 2, petalSizeXStep: 0.001,
+    petalSizeY: 0.592, petalSizeYMin: 0, petalSizeYMax: 2, petalSizeYStep: 0.001,
+    petalSizeRand: 0.15, petalSizeRandMin: 0, petalSizeRandMax: 2, petalSizeRandStep: 0.001,
 
     petalStroke: 1, petalStrokeMin: 0.001, petalStrokeMax: 15, petalStrokeStep: 0.001,
 
   },
 
   centre: {
-    showCentres: false,
+    showCentres: true,
 
-    centreOffsetX: 0.1, centreOffsetXMin: -1, centreOffsetXMax: 2, centreOffsetXStep: 0.001,
-    centreOffsetY: 0.1, centreOffsetYMin: -1, centreOffsetYMax: 2, centreOffsetYStep: 0.001,
+    centreOffsetX: 0.04, centreOffsetXMin: -1, centreOffsetXMax: 2, centreOffsetXStep: 0.001,
+    centreOffsetY: 0.05, centreOffsetYMin: -1, centreOffsetYMax: 2, centreOffsetYStep: 0.001,
 
-    centreSize: 0.1, centreSizeMin: 0.001, centreSizeMax: 0.01, centreSizeStep: 0.0001,
+    centreSize: 0.01, centreSizeMin: 0.001, centreSizeMax: 0.01, centreSizeStep: 0.0001,
   },
 
   display: {
-    scribbleRoughness: 0.5, scribbleRoughnessMin: 0, scribbleRoughnessMax: 10, scribbleRoughnessStep: 0.1,
+    scribbleRoughness: 1.3, scribbleRoughnessMin: 0, scribbleRoughnessMax: 10, scribbleRoughnessStep: 0.1,
 
     blurRadius: 0.5, blurRadiusMin: 0, blurRadiusMax: 3, blurRadiusStep: 0.01,
-    blurIterations: 4, blurIterationsMin: 0, blurIterationsMax: 20, blurIterationsStep: 1,
+    blurIterations: 3, blurIterationsMin: 0, blurIterationsMax: 20, blurIterationsStep: 1,
 
-    unsharpAmount: 40, unsharpAmountMin: 0, unsharpAmountMax: 200, unsharpAmountStep: 1,
+    unsharpAmount: 50, unsharpAmountMin: 0, unsharpAmountMax: 200, unsharpAmountStep: 1,
     unsharpThreshold: 0.4, unsharpThresholdMin: 0, unsharpThresholdMax: 10, unsharpThresholdStep: 0.1,
 
-    backgroundColor: [0, 0, 0],
+    backgroundColor: [222, 222, 222],
     frameRate: 15, frameRateMin: 1, frameRateMax: 120, frameRateStep: 1
   },
 }
