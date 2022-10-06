@@ -2,7 +2,6 @@ import p5 from "p5";
 import * as dat from 'dat.gui';
 import { Petal, Flower } from "./flower"
 import { params } from './params'
-import Msgpack from 'msgpack-lite'
 
 
 let gui;
