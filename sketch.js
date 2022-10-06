@@ -1,5 +1,4 @@
 
-let noise;
 let blurShader;
 let unsharpShader;
 let scribbleBuffer;
@@ -78,8 +77,6 @@ function setup() {
   scribbleBuffer = createGraphics(w, h, WEBGL);
 
   canvas.mousePressed(mouseDown);
-
-  noise = loadImage('noise/2.png');
 
   frameRate(60);
 
