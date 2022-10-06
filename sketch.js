@@ -4,7 +4,6 @@ let blurShader;
 let unsharpShader;
 let scribbleBuffer;
 let canvas;
-let hands;
 
 let params = {
   flower: {
@@ -81,7 +80,6 @@ function setup() {
   canvas.mousePressed(mouseDown);
 
   noise = loadImage('noise/2.png');
-  hands = loadImage('hands1000.jpg');
 
   frameRate(60);
 
@@ -142,7 +140,6 @@ function draw() {
   postProcess();
 
   clear();
-  //image(hands, 0, 0);
   //blend(scribbleBuffer, -width/2, -height/2, width, height, 0, 0, width, height, SCREEN);
   image(scribbleBuffer, 0, 0);
 
