@@ -3,7 +3,6 @@ import * as dat from 'dat.gui';
 import { Petal, Flower } from "./flower"
 import { params } from './params'
 
-
 let gui;
 
 const sketch = p5 => {
@@ -62,6 +61,17 @@ const sketch = p5 => {
       loadCompressedState(p.state);
     }
 
+
+    window.onpopstate = (e) => {
+      console.log("pop");
+      let p = p5.getURLParams();
+      if (typeof p.state !== 'undefined') {
+        loadCompressedState(p.state);
+      }
+    }
+
+
+
     p5.frameRate(15);
 
     font = p5.loadFont('fonts/msmincho.otf');
@@ -88,15 +98,13 @@ const sketch = p5 => {
       i++;
     }
 
-    console.log(JSON.stringify(strippedParams));
-
-    return window.btoa(JSON.stringify(strippedParams, (key, val) => {
+    return encodeURIComponent(window.btoa(JSON.stringify(strippedParams, (key, val) => {
       return val.toFixed ? Number(val.toFixed(3)) : val
-    }));
+    })));
   }
 
   function loadCompressedState(state) {
-    let strippedParams = JSON.parse(window.atob(state));
+    let strippedParams = JSON.parse(window.atob(decodeURIComponent(state)));
     let n = 0;
     for (const [name, param] of Object.entries(params)) {
       let i = 0;
@@ -181,7 +189,10 @@ const sketch = p5 => {
     scribbleBuffer.pop();
 
     let s = getCompressedState();
-    window.history.pushState(s, 'flower', '?state=' + s);
+    if (s != p5.getURLParams().state) {
+      console.log('newstate');
+      window.history.pushState(s, 'flower', '?state=' + s);
+    }
   }
 
   function generateFlowerPositions() {
