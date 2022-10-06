@@ -61,6 +61,10 @@ let flowerGui;
 let petalGui;
 let centreGui;
 let displayGui;
+let font;
+
+let showStatusTextCountdown = 0;
+let statusText = "welcome";
 
 
 let flowers = [];
@@ -68,6 +72,12 @@ let flowers = [];
 function preload() {
   blurShader = loadShader('shaders/blur.vert', 'shaders/blur.frag');
   unsharpShader = loadShader('shaders/unsharp.vert', 'shaders/unsharp.frag');
+  font = loadFont('fonts/MSMincho.ttf');
+}
+
+function showMessage(text, time=2000) {
+  statusText = text;
+  showStatusTextCountdown = time;
 }
 
 function setup() {
@@ -95,6 +105,12 @@ function setup() {
   displayGui = createGui('display');
   displayGui.addObject(params.display);
   displayGui.setPosition(20, height - 450);
+
+
+  setInterval(() => {
+    if (showStatusTextCountdown > 0)
+      showStatusTextCountdown -= 100;
+  }, 100);
 
   //load default preset
   loadPreset(68);
@@ -128,17 +144,42 @@ function draw() {
 
   scribbleBuffer.clear();
   scribbleBuffer.background(params.display.backgroundColor);
+
   scribbleBuffer.push();
   scribbleBuffer.translate(-scribbleBuffer.width/2, -scribbleBuffer.height/2);
 
   flowers = [createFlower(new p5.Vector(width/2, height/2))];
   drawFlowers(scribbleBuffer);
 
+  scribbleBuffer.textFont(font);
+  scribbleBuffer.fill(params.flower.flowerStroke);
+
+  let left = width/2 - 140;
+
+  scribbleBuffer.textSize(80);
+  scribbleBuffer.text("F", left, 90);
+  scribbleBuffer.textSize(40);
+  scribbleBuffer.text("lower", left + 30, 90);
+
+  scribbleBuffer.textSize(80);
+  scribbleBuffer.text("P", left + 160, 90);
+  scribbleBuffer.textSize(40);
+  scribbleBuffer.text("ower", left + 190, 90);
+
+  scribbleBuffer.textSize(24);
+  scribbleBuffer.text("[ALT]+{letter} to save a flower", width - 500, height - 40);
+  scribbleBuffer.text("{letter} to load a flower", width - 500, height - 70);
+  if (showStatusTextCountdown > 0)
+    scribbleBuffer.text(statusText, 300, height - 70);
+
+
   postProcess();
 
   clear();
   //blend(scribbleBuffer, -width/2, -height/2, width, height, 0, 0, width, height, SCREEN);
   image(scribbleBuffer, 0, 0);
+
+
 
   scribbleBuffer.pop();
 }
@@ -239,10 +280,13 @@ function drawCentre(x, y, size, scribble) {
 }
 
 function savePreset(keycode) {
+  if (keycode == ALT) return;
   storeItem("preset" + keycode, params);
+  showMessage("saved " + String.fromCharCode(keycode));
 }
 
 function loadPreset(keycode) {
+  if (keycode == ALT) return;
   let preset = getItem("preset" + keycode);
   if (preset != null) {
     for (type of ["petal", "flower", "display", "centre"]) {
@@ -255,10 +299,11 @@ function loadPreset(keycode) {
           else if (type == "display")
             displayGui.prototype.setValue(key, value);
           else
-          centreGui.prototype.setValue(key, value);
+            centreGui.prototype.setValue(key, value);
         }
       }
     }
+    showMessage("loaded " + String.fromCharCode(keycode));
   }
 }
 
