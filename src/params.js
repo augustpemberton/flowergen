@@ -1,9 +1,9 @@
 let params = {
   flower: {
-    flowerSizeX: 0.21, flowerSizeXMin: 0, flowerSizeXMax: 0.5, flowerSizeXStep: 0.001,
-    flowerSizeY: 0.17, flowerSizeYMin: 0, flowerSizeYMax: 0.5, flowerSizeYStep: 0.001,
+    flowerSize: 0.21, flowerSizeMin: 0, flowerSizeMax: 0.5, flowerSizeStep: 0.001,
+    rotation: 0, rotationMin: 0, rotationMax: 360, rotationStep: 1,
 
-    nPetals: 9, nPetalsMin: 1, nPetalsMax: 20, nPetalsStep: 1,
+    nPetals: 9, nPetalsMin: 1, nPetalsMax:40, nPetalsStep: 1,
 
     flowerStroke: [84, 109, 115],
     flowerFill: [108, 157, 141],
@@ -30,7 +30,9 @@ let params = {
     centreOffsetX: 0.04, centreOffsetXMin: -1, centreOffsetXMax: 2, centreOffsetXStep: 0.001,
     centreOffsetY: 0.05, centreOffsetYMin: -1, centreOffsetYMax: 2, centreOffsetYStep: 0.001,
 
-    centreSize: 0.01, centreSizeMin: 0.001, centreSizeMax: 0.1, centreSizeStep: 0.0001,
+    centreSize: 0.01, centreSizeMin: 0.001, centreSizeMax: 1, centreSizeStep: 0.0001,
+    centreStroke: [84, 109, 115],
+    centreFill: [84, 109, 115],
   },
 
   display: {
@@ -44,7 +46,9 @@ let params = {
     unsharpThreshold: 0.4, unsharpThresholdMin: 0, unsharpThresholdMax: 10, unsharpThresholdStep: 0.1,
 
     backgroundColor: [222, 222, 222],
-    frameRate: 15, frameRateMin: 1, frameRateMax: 120, frameRateStep: 1
+    frameRate: 15, frameRateMin: 1, frameRateMax: 120, frameRateStep: 1,
+    pixelDensity: 0, pixelDensityMin: 0, pixelDensityMax: 5, pixelDensityStep: 0.001,
+    blendModeEnum: '', blendModeEnumValues: []
   },
 }
 

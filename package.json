@@ -29,6 +29,7 @@
     "@msgpack/msgpack": "^2.8.0",
     "base65536": "^4.0.2",
     "dat.gui": "^0.7.9",
+    "gif.js": "^0.2.0",
     "msgpack-lite": "^0.1.26",
     "p5": "^1.4.2",
     "p5.gui.variables": "^1.0.1",
