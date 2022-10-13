@@ -1,104 +1,50 @@
 import p5 from "p5";
-import * as dat from 'dat.gui';
 import { Petal, Flower } from "./flower"
 import { params } from './params'
-import { Param, ParamTypes } from "./param"
-
-let gui;
+import Controls from "./controls"
 
 const sketch = p5 => {
   window.p5 = p5;
 
+  let flowers = [];
+
+  let controls;
+
+  // Post Process
   let blurShader;
   let unsharpShader;
   let scribbleBuffer;
   let canvas;
+  let defaultPixelDensity;
 
+  // Text
   let font;
-
   let showStatusTextCountdown = 0;
-  let statusText = "welcome";
+  let statusText = "";
 
-  let flowers = [];
-
+  // Background Image Unput
   let input;
   let img;
   let imgSize;
 
+  // Canvas 
   let pos;
   let size;
 
-  let defaultPixelDensity;
-
-  function saveImage() {
-    p5.save('flowerpower.png');
-  }
-
   function setupGUI() {
-    gui = new dat.GUI();
+    params.display['saveFunc'] = () => { p5.save('flowerpower.png'); };
+    controls = new Controls(params);
 
-    params.display['saveFunc'] = saveImage;
-
-    for (const [name, category] of Object.entries(params)) {
-      var folder = gui.addFolder(name);
-      for (const [id, param] of Object.entries(category)) {
-
-        if (param.paramType == ParamTypes.Ranged) {
-          let p = folder.add(param, "value").name(param.name).min(param.min).max(param.max);
-          p.step(Math.max(param.step, 0.0001));
-        }
-
-        else if (param.paramType == ParamTypes.Color) {
-          folder.addColor(param, "value").name(param.name);
-        }
-
-        else if (param.paramType == ParamTypes.RangedArray) {
-          let suffixes = [];
-          if (param.value.length == 2) suffixes = ['x', 'y'];
-          else if (param.value.length == 3) suffixes = ['x', 'y'];
-          else {
-            for (let i=0; i<param.value.length; i++)
-              suffixes.push(String.fromCharCode('a'.charCodeAt(0) + i));  
-          }
-
-          for (let i=0; i<param.value.length; i++) {
-            let p = folder.add(param.values, i).name(param.name + " " + suffixes[i])
-              .min(param.getMin(i)).max(param.getMax(i));
-            p.step(Math.max(param.step, 0.0001));
-          }
-        }
-
-        else if (param.paramType == ParamTypes.Bool) {
-          folder.add(param, "value").name(param.name);
-        }
-
-        else if (param.paramType == ParamTypes.Choice) {
-          folder.add(param, "value").name(param.name);
-        }
-        
-        else {
-          console.log("unknown param type")
-          console.log(param);
-        }
+    input = p5.createFileInput((file) => {
+      if (file.type === 'image') {
+        img = p5.createImg(file.data, '', '', () => {
+          imgSize = p5.createVector(img.width, img.height);
+          resized();
+        });
       }
-    }
-
-
-    input = p5.createFileInput(handleFile);
+    });
     input.position(0, 0);
   };
-
-  function handleFile(file) {
-    if (file.type === 'image') {
-      img = p5.createImg(file.data, '', '', () => {
-        imgSize = p5.createVector(img.width, img.height);
-        resized();
-        img.hide();
-      });
-    } else {
-      img = null;
-    }
-  }
 
   function showMessage(text, time = 2000) {
     statusText = text;
@@ -141,11 +87,6 @@ const sketch = p5 => {
 
     canvas.mousePressed(mouseDown);
 
-
-
-    loadFromURL();
-    window.onpopstate = loadFromURL;
-
     p5.frameRate(15);
 
     font = p5.loadFont('fonts/msmincho.otf');
@@ -158,10 +99,6 @@ const sketch = p5 => {
     }, 100);
 
     resized();
-  }
-
-  function loadFromURL() {
-    // TODO
   }
 
   function postProcess() {
@@ -220,7 +157,8 @@ const sketch = p5 => {
 
     if (img != null) {
       p5.image(img, pos.x, pos.y, size.x, size.y);
-      let blend = params.display.blendModeEnum.get();
+      let blend = params.display.blendMode.get();
+      console.log(blend);
       p5.blend(scribbleBuffer, 
         -size.x/2, -size.y/2, size.x, size.y, 
         pos.x, pos.y, size.x, size.y, 
@@ -308,7 +246,7 @@ const sketch = p5 => {
 
   function savePreset(keycode) {
     if (keycode == p5.ALT) return;
-    p5.storeItem("preset" + keycode, getCompressedState());
+    p5.storeItem("preset" + keycode, controls.getState());
     showMessage("saved " + String.fromCharCode(keycode));
   }
 
@@ -316,6 +254,7 @@ const sketch = p5 => {
     if (keycode == p5.ALT) return;
     let preset = p5.getItem("preset" + keycode);
     if (preset != null) {
+      controls.loadState(preset);
       showMessage("loaded " + String.fromCharCode(keycode));
     } else {
       showMessage(String.fromCharCode(keycode) + " is empty");

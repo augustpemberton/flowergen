@@ -98,16 +98,17 @@ class ChoiceParam extends Param {
         this.setValue(defaultVal);
     }
 
-    setChoices(choices) { this.choices = choices; }
+    setChoices(choices) { 
+        this.choices = choices; 
+        if (this.choices.length > 0) this.value = this.choices[0];
+    }
 
     setValue(newVal) {
-        if (this.choices.length == 0) return;
-        this.value = clamp(newVal, 0, this.choices.length - 1, 1);
+        if (this.choices.includes(newVal)) this.value = newVal;
     }
 
     get() { 
-        if (this.choices.length == 0) return null;
-        return this.choices[this.value];
+        return this.value;
     }
 }
 

@@ -1,4 +1,4 @@
-import {Param, RangedParam, RangedArrayParam, BoolParam, ColorParam, ChoiceParam} from './param.js';
+import {RangedParam, RangedArrayParam, BoolParam, ColorParam, ChoiceParam} from './param.js';
 
 let params = {
   flower: {
@@ -8,7 +8,7 @@ let params = {
 
     flowerStroke: new ColorParam("flower stroke", [84, 109, 115]),
     flowerFill: new ColorParam("flower fill", [108, 157, 141]),
-    flowerFillAlpha: new RangedParam("flowerFillAlpha", 0, 0, 1),
+    flowerFillAlpha: new RangedParam("flowerFillAlpha", 0, 0, 255),
     flowerRandSeed: new RangedParam("rand seed", 146, 0, 1000, 1),
   },
 
