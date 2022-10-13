@@ -83,8 +83,7 @@ class Flower {
         var angle = this.p5.TWO_PI / this.petals.length;
         this.canvas.translate(this.canvas.width * this.pos.x, this.canvas.height * this.pos.y);
         this.canvas.scale(this.scale, this.scale);
-
-        this.canvas.rotate(this.rotation * (3.14159*2)/360);
+        this.canvas.rotate(this.rotation * this.p5.TWO_PI/360);
 
         for (var petal of this.petals) {
             petal.draw(scribble);
