@@ -51,13 +51,14 @@ class Controls {
                 }
 
                 if (p) {
-                    p.onFinishChange = this.updateURL;
+                    let ctx = this;
+                    p.onFinishChange(() => {ctx.updateURL();});
                     p.listen();
                 }
             }
         }
 
-        this.loadState(this.getState());
+        this.loadFromURL();
     }
 
     getParam(paramID) {
@@ -82,6 +83,7 @@ class Controls {
     }
 
     loadState(state) {
+        console.log("loading state: ");
         console.log(state);
         for (const [key, value] of Object.entries(state)) {
             this.getParam(key).setValue(value);
@@ -97,14 +99,28 @@ class Controls {
         }
 
         console.log(s);
+
         return s;
     }
 
-    getURLState() { return encodeURIComponent(window.btoa(getState())); }
-    loadURLState(str) { this.loadState(window.atob(decodeURIComponent(str))); }
+    getURLState() { 
+        return encodeURIComponent(window.btoa(
+            JSON.stringify(this.getState()))); 
+    }
+    loadURLState(str) { this.loadState(JSON.parse(
+        window.atob(decodeURIComponent(str)))); }
 
     updateURL() {
-        
+        let s = this.getURLState();
+        console.log(s);
+        window.history.pushState(s, 'flower', '?state=' + s);
+    }
+
+    loadFromURL() {
+        let stateStr = window.p5.getURLParams().state;
+        if (typeof stateStr === 'undefined') return;
+
+        this.loadURLState(stateStr);
     }
 }
 
