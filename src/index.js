@@ -2,6 +2,7 @@ import p5 from "p5";
 import * as dat from 'dat.gui';
 import { Petal, Flower } from "./flower"
 import { params } from './params'
+import { Param, ParamTypes } from "./param"
 
 let gui;
 
@@ -38,18 +39,46 @@ const sketch = p5 => {
 
     params.display['saveFunc'] = saveImage;
 
-    for (const [name, param] of Object.entries(params)) {
+    for (const [name, category] of Object.entries(params)) {
       var folder = gui.addFolder(name);
-      for (const [key, value] of Object.entries(param)) {
-        if (!key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step") && !key.endsWith("Values")) {
-          if (key.endsWith("Enum")) {
-            folder.add(param, key).options(param[key + "Values"]).listen();
-          } else if (value.length !== 'undefined' && value.length >= 3) {
-            folder.addColor(param, key).listen();
-          } else {
-            folder.add(param, key,
-              param[key + "Min"], param[key + "Max"], param[key + "Step"]).listen();
+      for (const [id, param] of Object.entries(category)) {
+
+        if (param.paramType == ParamTypes.Ranged) {
+          let p = folder.add(param, "value").name(param.name).min(param.min).max(param.max);
+          p.step(Math.max(param.step, 0.0001));
+        }
+
+        else if (param.paramType == ParamTypes.Color) {
+          folder.addColor(param, "value").name(param.name);
+        }
+
+        else if (param.paramType == ParamTypes.RangedArray) {
+          let suffixes = [];
+          if (param.value.length == 2) suffixes = ['x', 'y'];
+          else if (param.value.length == 3) suffixes = ['x', 'y'];
+          else {
+            for (let i=0; i<param.value.length; i++)
+              suffixes.push(String.fromCharCode('a'.charCodeAt(0) + i));  
           }
+
+          for (let i=0; i<param.value.length; i++) {
+            let p = folder.add(param.values, i).name(param.name + " " + suffixes[i])
+              .min(param.getMin(i)).max(param.getMax(i));
+            p.step(Math.max(param.step, 0.0001));
+          }
+        }
+
+        else if (param.paramType == ParamTypes.Bool) {
+          folder.add(param, "value").name(param.name);
+        }
+
+        else if (param.paramType == ParamTypes.Choice) {
+          folder.add(param, "value").name(param.name);
+        }
+        
+        else {
+          console.log("unknown param type")
+          console.log(param);
         }
       }
     }
@@ -108,24 +137,14 @@ const sketch = p5 => {
       p5.SUBTRACT
     ]
 
-    params.display.blendModeEnumValues = modes;
-    params.display.blendModeEnum = 'lighten';
+    params.display.blendMode.setChoices(modes);
 
     canvas.mousePressed(mouseDown);
 
-    let p = p5.getURLParams();
-    if (typeof p.state !== 'undefined') {
-      loadCompressedState(p.state);
-    }
 
 
-    window.onpopstate = (e) => {
-      console.log("pop");
-      let p = p5.getURLParams();
-      if (typeof p.state !== 'undefined') {
-        loadCompressedState(p.state);
-      }
-    }
+    loadFromURL();
+    window.onpopstate = loadFromURL;
 
     p5.frameRate(15);
 
@@ -141,44 +160,8 @@ const sketch = p5 => {
     resized();
   }
 
-  function getCompressedState() {
-    let strippedParams = [];
-
-    let i = 0;
-    for (const [name, param] of Object.entries(params)) {
-      strippedParams.push([]);
-      for (const [key, value] of Object.entries(param)) {
-        if (!key.endsWith("Func") && 
-            !key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step") && 
-            !key.endsWith("Values")) {
-          strippedParams[i].push(value);
-        }
-      }
-      i++;
-    }
-
-    return encodeURIComponent(window.btoa(JSON.stringify(strippedParams, (key, val) => {
-      if (typeof val !== 'undefined')
-        return val.toFixed ? Number(val.toFixed(3)) : val
-      else return 0;
-    })));
-  }
-
-  function loadCompressedState(state) {
-    let strippedParams = JSON.parse(window.atob(decodeURIComponent(state)));
-    let n = 0;
-    for (const [name, param] of Object.entries(params)) {
-      let i = 0;
-      for (const [key, value] of Object.entries(params[name])) {
-        if (!key.endsWith("Func") && 
-            !key.endsWith("Min") && !key.endsWith("Max") && !key.endsWith("Step") && 
-            !key.endsWith("Values")) {
-          params[name][key] = strippedParams[n][i];
-          i++;
-        }
-      }
-      n++;
-    }
+  function loadFromURL() {
+    // TODO
   }
 
   function postProcess() {
@@ -186,8 +169,8 @@ const sketch = p5 => {
     blurShader.setUniform('texture', scribbleBuffer);
     blurShader.setUniform('resolution', [scribbleBuffer.width, scribbleBuffer.height]);
 
-    let radius = params.display.blurRadius;
-    for (var pass = 0; pass < params.display.blurIterations; pass++) {
+    let radius = params.display.blurRadius.get();
+    for (var pass = 0; pass < params.display.blurIterations.get(); pass++) {
       for (var i = 0; i < 2; i++) {
         blurShader.setUniform('direction', i % 2 == 0 ? [radius, 0] : [0, radius]);
         scribbleBuffer.rect(0, 0, size.x, size.y);
@@ -199,25 +182,24 @@ const sketch = p5 => {
 
     unsharpShader.setUniform('texture', scribbleBuffer);
     unsharpShader.setUniform('resolution', [scribbleBuffer.width, scribbleBuffer.height]);
-    unsharpShader.setUniform('amount', params.display.unsharpAmount);
-    unsharpShader.setUniform('threshold', params.display.unsharpThreshold);
+    unsharpShader.setUniform('amount', params.display.unsharpAmount.get());
+    unsharpShader.setUniform('threshold', params.display.unsharpThreshold.get());
     scribbleBuffer.rect(0, 0, size.x, size.y);
 
     scribbleBuffer.resetShader();
   }
 
   p5.draw = () => {
-    let density = params.display.pixelDensity;
+    let density = params.display.pixelDensity.get();
     if (density == 0) density = defaultPixelDensity;
     p5.pixelDensity(density);
 
-    p5.frameRate(params.display.frameRate);
-
-    p5.background(params.display.backgroundColor);
+    p5.frameRate(params.display.frameRate.get());
+    p5.background(params.display.backgroundColor.get());
 
     scribbleBuffer.clear(0,0,0,0);
     if (!img) {
-      scribbleBuffer.background(params.display.backgroundColor);
+      scribbleBuffer.background(params.display.backgroundColor.get());
     }
 
     scribbleBuffer.push();
@@ -228,17 +210,17 @@ const sketch = p5 => {
 
     if (typeof font !== 'undefined' && !img) {
       scribbleBuffer.textFont(font);
-      scribbleBuffer.fill(params.flower.flowerStroke);
+      scribbleBuffer.fill(params.flower.flowerStroke.get());
       drawText(); 
     }
 
-    if (params.display.postProcess) postProcess();
+    if (params.display.postProcess.get()) postProcess();
 
     p5.clear();
 
     if (img != null) {
       p5.image(img, pos.x, pos.y, size.x, size.y);
-      let blend = params.display.blendModeEnum;
+      let blend = params.display.blendModeEnum.get();
       p5.blend(scribbleBuffer, 
         -size.x/2, -size.y/2, size.x, size.y, 
         pos.x, pos.y, size.x, size.y, 
@@ -248,11 +230,6 @@ const sketch = p5 => {
     }
 
     scribbleBuffer.pop();
-
-    let s = getCompressedState();
-    if (s != p5.getURLParams().state) {
-      window.history.pushState(s, 'flower', '?state=' + s);
-    }
   }
 
   function drawText() {
@@ -271,7 +248,6 @@ const sketch = p5 => {
     scribbleBuffer.textSize(24);
     scribbleBuffer.text("{letter} to load a flower", size.x - 500, size.y - 100);
     scribbleBuffer.text("[ALT]+{letter} to save a flower", size.x - 500, size.y - 70);
-    scribbleBuffer.text("browser back/forward to undo/redo", size.x - 500, size.y - 40);
     if (showStatusTextCountdown > 0)
       scribbleBuffer.text(statusText, 300, size.y - 70);
 
@@ -295,7 +271,7 @@ const sketch = p5 => {
     let scribble = new Scribble(buffer);
     scribble.numEllipseSteps = 1;
     scribble.bowing = 1;
-    scribble.roughness = params.display.scribbleRoughness;
+    scribble.roughness = params.display.scribbleRoughness.get();
 
     for (var flower of flowers) {
       flower.draw(scribble);
@@ -340,7 +316,6 @@ const sketch = p5 => {
     if (keycode == p5.ALT) return;
     let preset = p5.getItem("preset" + keycode);
     if (preset != null) {
-      loadCompressedState(preset);
       showMessage("loaded " + String.fromCharCode(keycode));
     } else {
       showMessage(String.fromCharCode(keycode) + " is empty");
@@ -369,32 +344,33 @@ const sketch = p5 => {
       pos = p5.createVector(p5.mouseX, p5.mouseY);
     }
 
-    let nPetals = params.flower.nPetals;
+    let nPetals = params.flower.nPetals.get();
     let petals = [];
-    let petalOffset = p5.createVector(params.petal.petalOffsetX, params.petal.petalOffsetY);
-    let petalSize = p5.createVector(params.petal.petalSizeX, params.petal.petalSizeY);
-    let showCentres = params.centre.showCentres;
-    p5.randomSeed(params.flower.flowerRandSeed);
+    let petalOffset = p5.createVector(params.petal.petalOffset.get()[0], params.petal.petalOffset.get()[1]);
+    let petalSize = p5.createVector(params.petal.petalSize.get()[0], params.petal.petalSize.get()[1]);
+    let showCentres = params.centre.showCentres.get();
+    p5.randomSeed(params.flower.flowerRandSeed.get());
 
-    let pOff = params.petal.petalOffsetRand;
-    let sOff = params.petal.petalSizeRand;
+    let pOff = params.petal.petalOffsetRand.get();
+    let sOff = params.petal.petalSizeRand.get();
     for (var i = 0; i < nPetals; i++) {
       petals.push(new Petal(
         p5.createVector(petalOffset.x + p5.random(-pOff, pOff), petalOffset.y + p5.random(-pOff, pOff)),
         p5.createVector(petalSize.x + p5.random(-sOff, sOff), petalSize.y + p5.random(-sOff, sOff)),
-        params.petal.petalStroke, showCentres, params.centre.centreSize,
-        p5.createVector(params.centre.centreOffsetX, params.centre.centreOffsetY),
-        params.centre.centreFill,
-        params.centre.centreStroke,
+        params.petal.petalStroke.get(), showCentres, params.centre.centreSize.get(),
+        p5.createVector(params.centre.centreOffset.get()[0], params.centre.centreOffset.get()[1]),
+        params.centre.centreFill.get(),
+        params.centre.centreStroke.get(),
       ));
     }
 
     let f = new Flower(p5, p5.createVector(pos.x / size.x, pos.y / size.y),
-      params.flower.flowerSize, params.flower.rotation,
+      params.flower.flowerSize.get(), params.flower.rotation.get(),
       petals, 
-      params.flower.flowerFill, params.flower.flowerFillAlpha, params.flower.flowerStroke, scribbleBuffer);
+      params.flower.flowerFill.get(), params.flower.flowerFillAlpha.get(),
+      params.flower.flowerStroke.get(), scribbleBuffer);
 
-    f.randomSeed = params.flower.flowerRandSeed;
+    f.randomSeed = params.flower.flowerRandSeed.get();
 
     return f;
   };
