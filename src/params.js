@@ -19,7 +19,7 @@ let params = {
     petalSize: new RangedArrayParam("petal size", [0.726, 0.592], [0], [2], [0]), 
     petalSizeRand: new RangedParam("petal size rand", 0.15, 0, 1),
 
-    petalStroke: new RangedParam("petal stroke", 1, 0.001, 15),
+    petalStroke: new RangedParam("petal stroke", 1, 0, 15),
   },
 
   centre: {
@@ -32,6 +32,7 @@ let params = {
   },
 
   display: {
+    showText: new BoolParam("show text", true),
     postProcess: new BoolParam("post process", true),
     scribbleRoughness: new RangedParam("scribble roughness", 1.3, 0, 10, 0.1),
 
@@ -42,11 +43,12 @@ let params = {
     unsharpThreshold: new RangedParam("unsharp threshold", 0.4, 0, 10, 0.1),
 
     backgroundColor: new ColorParam("bg color", [222, 222, 222]),
-    frameRate: new RangedParam("fps", 15, 1, 120, 1),
+    frameRate: new RangedParam("fps", 15, 0, 120, 1),
     pixelDensity: new RangedParam("pixel density", 0, 0, 5, 0.001),
 
     // to be filled by p5 instance
     blendMode: new ChoiceParam("blend mode", []),
+
   },
 }
 

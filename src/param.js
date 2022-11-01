@@ -30,6 +30,10 @@ class Param {
 
     setName(newName) { this.name = newName; }
     getName() { return this.name; }
+
+    randomize() { 
+        //
+    }
 }
 
 class RangedParam extends Param {

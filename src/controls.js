@@ -47,7 +47,8 @@ class Controls {
 
                 else {
                     console.log("unknown param type")
-                    console.log(param);
+                    console.log(params);
+                    p = folder.add(category, id);
                 }
 
                 if (p) {

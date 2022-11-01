@@ -7,6 +7,7 @@ const sketch = p5 => {
   window.p5 = p5;
 
   let flowers = [];
+  let flowerPos = p5.createVector(0.5, 0.5);
 
   let controls;
 
@@ -142,14 +143,15 @@ const sketch = p5 => {
     scribbleBuffer.push();
     scribbleBuffer.translate(-scribbleBuffer.width / 2, -scribbleBuffer.height / 2);
 
-    flowers[0] = createFlower(new p5.createVector(size.x / 2, size.y / 2));
+    flowers[0] = createFlower();
     drawFlowers(scribbleBuffer);
 
     if (typeof font !== 'undefined' && !img) {
       scribbleBuffer.textFont(font);
       scribbleBuffer.fill(params.flower.flowerStroke.get());
-      drawText(); 
     }
+
+    if (params.display.showText.get()) drawText();
 
     if (params.display.postProcess.get()) postProcess();
 
@@ -158,7 +160,6 @@ const sketch = p5 => {
     if (img != null) {
       p5.image(img, pos.x, pos.y, size.x, size.y);
       let blend = params.display.blendMode.get();
-      console.log(blend);
       p5.blend(scribbleBuffer, 
         -size.x/2, -size.y/2, size.x, size.y, 
         pos.x, pos.y, size.x, size.y, 
@@ -182,6 +183,9 @@ const sketch = p5 => {
     scribbleBuffer.text("P", left + 160, 90);
     scribbleBuffer.textSize(40);
     scribbleBuffer.text("ower", left + 190, 90);
+
+    scribbleBuffer.textSize(150);
+    scribbleBuffer.text("imagiro", pos.x + size.x/2 - 250, pos.y + size.y/2 + 50);
 
     scribbleBuffer.textSize(24);
     scribbleBuffer.text("{letter} to load a flower", size.x - 500, size.y - 100);
@@ -272,15 +276,13 @@ const sketch = p5 => {
   }
 
   function mouseDown() {
-    if (img) {
-      flowers.push(createFlower(p5.createVector(p5.mouseX - pos.x, p5.mouseY - pos.y)));
-      p5.draw();
-    }
+    flowerPos = p5.createVector((p5.mouseX - pos.x) / size.x, (p5.mouseY - pos.y) / size.y);
+    p5.draw();
   }
 
   function createFlower(pos) {
     if (typeof pos === 'undefined') {
-      pos = p5.createVector(p5.mouseX, p5.mouseY);
+      pos = p5.createVector(flowerPos.x * size.x, flowerPos.y * size.y);
     }
 
     let nPetals = params.flower.nPetals.get();
