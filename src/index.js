@@ -184,9 +184,6 @@ const sketch = p5 => {
     scribbleBuffer.textSize(40);
     scribbleBuffer.text("ower", left + 190, 90);
 
-    scribbleBuffer.textSize(150);
-    scribbleBuffer.text("imagiro", pos.x + size.x/2 - 250, pos.y + size.y/2 + 50);
-
     scribbleBuffer.textSize(24);
     scribbleBuffer.text("{letter} to load a flower", size.x - 500, size.y - 100);
     scribbleBuffer.text("[ALT]+{letter} to save a flower", size.x - 500, size.y - 70);
@@ -218,6 +215,18 @@ const sketch = p5 => {
     for (var flower of flowers) {
       flower.draw(scribble);
     }
+
+    if (params.display.showText.get()) {
+      buffer.push();
+      buffer.textAlign(p5.CENTER, p5.CENTER);
+      buffer.stroke(params.flower.flowerStroke.get());
+      buffer.fill(params.flower.flowerStroke.get());
+      buffer.textFont(font);
+      buffer.textSize(150);
+      buffer.text("imagiro", pos.x + size.x/2, pos.y + size.y/2);
+      buffer.pop();
+    }
+
   }
 
   p5.windowResized = () => {
