@@ -45,6 +45,10 @@ class Controls {
                     p = folder.add(param, "value").name(param.name).options(param.choices).listen();
                 }
 
+                else if (param.paramType == ParamTypes.Generic) {
+                    p = folder.add(param, "value").name(param.name).listen();
+                }
+
                 else {
                     console.log("unknown param type")
                     console.log(params);
@@ -54,6 +58,7 @@ class Controls {
                 if (p) {
                     let ctx = this;
                     p.onFinishChange(() => {ctx.updateURL();});
+                    console.log(p);
                     p.listen();
                 }
             }

@@ -23,6 +23,7 @@ class Param {
     constructor(name, defaultVal) {
         this.name = name;
         this.value = defaultVal;
+        this.paramType = ParamTypes.Generic;
     }
 
     setValue(newVal) { this.value = newVal; }

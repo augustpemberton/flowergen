@@ -1,4 +1,4 @@
-import {RangedParam, RangedArrayParam, BoolParam, ColorParam, ChoiceParam} from './param.js';
+import {Param, RangedParam, RangedArrayParam, BoolParam, ColorParam, ChoiceParam} from './param.js';
 
 let params = {
   flower: {
@@ -32,15 +32,14 @@ let params = {
   },
 
   display: {
-    showText: new BoolParam("show text", true),
     postProcess: new BoolParam("post process", true),
     scribbleRoughness: new RangedParam("scribble roughness", 1.3, 0, 10, 0.1),
 
     blurRadius: new RangedParam("blur radius", 0.5, 0, 2, 0.01),
     blurIterations: new RangedParam("blur iterations", 1, 0, 5, 1),
 
-    unsharpAmount: new RangedParam("unsharp amount", 20, 0, 200, 1),
-    unsharpThreshold: new RangedParam("unsharp threshold", 0.4, 0, 10, 0.1),
+    unsharpAmount: new RangedParam("unsharp amnt", 20, 0, 200, 1),
+    unsharpThreshold: new RangedParam("unsharp thresh", 0.4, 0, 10, 0.1),
 
     backgroundColor: new ColorParam("bg color", [222, 222, 222]),
     frameRate: new RangedParam("fps", 15, 0, 120, 1),
@@ -48,8 +47,13 @@ let params = {
 
     // to be filled by p5 instance
     blendMode: new ChoiceParam("blend mode", []),
-
   },
+
+  text: {
+    showText: new BoolParam("show text", true),
+    textValue: new Param("text", "imagiro"),
+    textColor: new ColorParam("text color", [0,0,0])
+  }
 }
 
 export {params};

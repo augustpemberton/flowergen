@@ -149,9 +149,8 @@ const sketch = p5 => {
     if (typeof font !== 'undefined' && !img) {
       scribbleBuffer.textFont(font);
       scribbleBuffer.fill(params.flower.flowerStroke.get());
+      drawText();
     }
-
-    if (params.display.showText.get()) drawText();
 
     if (params.display.postProcess.get()) postProcess();
 
@@ -216,14 +215,14 @@ const sketch = p5 => {
       flower.draw(scribble);
     }
 
-    if (params.display.showText.get()) {
+    if (params.text.showText.get()) {
       buffer.push();
       buffer.textAlign(p5.CENTER, p5.CENTER);
-      buffer.stroke(params.flower.flowerStroke.get());
-      buffer.fill(params.flower.flowerStroke.get());
+      buffer.stroke(params.text.textColor.get());
+      buffer.fill(params.text.textColor.get());
       buffer.textFont(font);
       buffer.textSize(150);
-      buffer.text("imagiro", pos.x + size.x/2, pos.y + size.y/2);
+      buffer.text(params.text.textValue.get(), pos.x + size.x/2, pos.y + size.y/2);
       buffer.pop();
     }
 
