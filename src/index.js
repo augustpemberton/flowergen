@@ -122,6 +122,7 @@ const sketch = p5 => {
     unsharpShader.setUniform('resolution', [scribbleBuffer.width, scribbleBuffer.height]);
     unsharpShader.setUniform('amount', params.display.unsharpAmount.get());
     unsharpShader.setUniform('threshold', params.display.unsharpThreshold.get());
+    unsharpShader.setUniform('u_time', p5.millis());
     scribbleBuffer.rect(0, 0, size.x, size.y);
 
     scribbleBuffer.resetShader();
