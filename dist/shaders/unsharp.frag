@@ -137,40 +137,5 @@ void main() {
     //if (sharp.r <= 0.1) sharp.a = 0.0;
     //gl_FragColor = vec4(0,0,0,0);
 
-    float m = max(resolution.x, resolution.y);
-    vec2 res = vec2(m, m);
-    vec2 uv_norm = gl_FragCoord.xy/res.xy;
-
-    vec4 color1 = vec4(.96, .65, .39, 1.);
-    vec4 color2 = vec4(.85, 0.45, .30, 1.);
-    vec4 color3 = vec4(.61, 0.32, .25, 1.);
-    vec4 color4 = vec4(.11, 0.23, .26, 1.);
-
-    float c = cnoise(vec3(uv_norm * 3., u_time * 0.5));
-	c += rand3(vec3(uv, 0.)).g * .5 - .01;
-
-    float c2 = texture2D(texture, uv).r;
-    c2 += rand3(vec3(uv, 0.)).r * .5 - .85;
-    c2 *= 3.;
-
-    float cs1 = c + c2 - 2.*c*c2; //xor
-    float cs2 = c - c2 - 2.*c*c2; //xor
-
-    c = cs2 * 0.2 + cs1;
-    //c = c2;
-
-    c += 1.5;
-
-
-    vec4 col;
-
-    if (c < 0.3) col = color1;
-    else if (c < 0.4) col = color3;
-    else if (c < 2.) col = color2;
-    else col = color4;
-
-    gl_FragColor = col;
-
-
-    //gl_FragColor = sharp;
+    gl_FragColor = sharp;
 }
