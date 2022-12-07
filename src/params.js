@@ -50,7 +50,7 @@ let params = {
   },
 
   text: {
-    showText: new BoolParam("show text", true),
+    showText: new BoolParam("show text", false),
     textValue: new Param("text", "imagiro"),
     textColor: new ColorParam("text color", [0,0,0])
   }
