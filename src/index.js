@@ -34,8 +34,6 @@ const sketch = p5 => {
 
   let setupCalled = false;
 
-  let capturer = new CCapture( {format: 'webm', framerate: 24 });
-
   function setupGUI() {
     params.display['saveFunc'] = () => { p5.save('flowerpower.png'); };
     controls = new Controls(p5, params);
@@ -71,9 +69,8 @@ const sketch = p5 => {
   }
 
   p5.preload = () => {
-    blurShader = p5.loadShader('shaders/blur.vert', 'shaders/blur.frag');
-    unsharpShader = p5.loadShader('shaders/unsharp.vert', 'shaders/unsharp.frag');
-    audio = p5.loadSound('audio/joythief.mp3');
+    //blurShader = p5.loadShader('shaders/blur.vert', 'shaders/blur.frag');
+    //unsharpShader = p5.loadShader('shaders/unsharp.vert', 'shaders/unsharp.frag');
   }
 
   p5.setup = () => {
@@ -88,9 +85,6 @@ const sketch = p5 => {
     scribbleBuffer.setAttributes('alpha', true);
 
     params.display.frameRate.setValue(24);
-
-    amplitude = new window.p5.Amplitude(0.3);
-    amplitude.setInput(audio);
 
     let modes = [
       p5.BLEND,
@@ -128,10 +122,10 @@ const sketch = p5 => {
   }
 
   function postProcess() {
+    /*
     scribbleBuffer.shader(blurShader);
     blurShader.setUniform('texture', scribbleBuffer);
-    blurShader.setUniform('resolution', [scribbleBuffer.width, scribbleBuffer.height]);
-
+    blurShader.setUniform('resolution', [scribbleBuffer.width, scribbleBuffer.height])
     let radius = params.display.blurRadius.get();
     for (var pass = 0; pass < params.display.blurIterations.get(); pass++) {
       for (var i = 0; i < 2; i++) {
@@ -151,6 +145,7 @@ const sketch = p5 => {
     scribbleBuffer.rect(0, 0, size.x, size.y);
 
     scribbleBuffer.resetShader();
+    */
   }
 
   let frameCounter = 0;
@@ -208,8 +203,6 @@ const sketch = p5 => {
     }
 
     scribbleBuffer.pop();
-
-    capturer.capture(canvas.canvas);
   }
 
   function drawRate() {
@@ -276,13 +269,6 @@ const sketch = p5 => {
     scribble.numEllipseSteps = 1;
     scribble.bowing = 1;
     scribble.roughness = params.display.scribbleRoughness.get();
-    /*
-    let amp = Math.pow(amplitude.getLevel(), 3) * 60;
-    console.log(amp);
-    scribble.roughness += scribble.roughness * amp;
-    */
-
-    scribble.roughness *= 1+ (Math.pow(amplitude.getLevel(), 3) * 200);
 
     for (var flower of flowers) {
       flower.draw(scribble);
@@ -343,38 +329,6 @@ const sketch = p5 => {
     } else {
       showMessage(String.fromCharCode(keycode) + " is empty");
     }
-  }
-
-  p5.keyPressed = () => {
-    if (p5.key == "[") {
-      capturer.start();
-      p5.draw();
-    }
-    else if (p5.key == "]") {
-      capturer.stop();
-      capturer.save();
-    } else if (p5.key == '<') {
-      audio.time(0);
-    } else if (p5.key == ';') {
-      if (audio.isPlaying()) audio.pause()
-      else audio.play();
-    } else if (p5.key == "\\") {
-      params.text.textValue.setValue('');
-    } else if (p5.key == 'Backspace') {
-      params.text.textValue.setValue(
-        params.text.textValue.get().slice(0, -1)
-      )
-    } else {
-      params.text.textValue.setValue(
-        params.text.textValue.get() + p5.key
-      )
-    }
-
-    /*
-    else if (p5.keyIsDown(p5.ALT)) savePreset(p5.keyCode);
-    else if (isLetter(p5.key)) loadPreset(p5.keyCode);
-    */
-    //p5.draw();
   }
 
   function isLetter(str) {
