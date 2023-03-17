@@ -1,11 +1,8 @@
-import p5 from "p5";
 import { Petal, Flower } from "./flower"
 import { params } from './params'
 import Controls from "./controls"
 
 const sketch = p5 => {
-  window.p5 = p5;
-
   let flowers = [];
   let flowerPos = p5.createVector(0.5, 0.5);
 
@@ -27,24 +24,45 @@ const sketch = p5 => {
   let input;
   let img;
   let imgSize;
+  let video;
+  let videoPos = 0;
+  let audio, amplitude;
 
   // Canvas 
   let pos;
   let size;
 
+  let setupCalled = false;
+
+  let capturer = new CCapture( {format: 'webm', framerate: 24 });
+
   function setupGUI() {
     params.display['saveFunc'] = () => { p5.save('flowerpower.png'); };
-    controls = new Controls(params);
+    controls = new Controls(p5, params);
 
     input = p5.createFileInput((file) => {
       if (file.type === 'image') {
         img = p5.createImg(file.data, '', '', () => {
+          params.display.background.setValue(false);
           imgSize = p5.createVector(img.width, img.height);
+          resized();
+        });
+      } else if (file.type === 'video') {
+        video = p5.createVideo(file.data, () => {
+          params.display.background.setValue(false);
+          imgSize = p5.createVector(video.width, video.height);
+          video.loop();
+          video.position(0, 0);
+          video.hide();
+          video.play();
+          video.volume(0);
+          videoPos = 0;
           resized();
         });
       }
     });
     input.position(0, 0);
+
   };
 
   function showMessage(text, time = 2000) {
@@ -55,15 +73,24 @@ const sketch = p5 => {
   p5.preload = () => {
     blurShader = p5.loadShader('shaders/blur.vert', 'shaders/blur.frag');
     unsharpShader = p5.loadShader('shaders/unsharp.vert', 'shaders/unsharp.frag');
+    audio = p5.loadSound('audio/joythief.mp3');
   }
 
   p5.setup = () => {
+    if (setupCalled) return;
+    setupCalled = true;
+    console.log('setup');
     defaultPixelDensity = p5.pixelDensity();
     size = p5.createVector(p5.windowWidth, p5.windowHeight);
     pos = p5.createVector(0, 0);
     canvas = p5.createCanvas(size.x, size.y);
     scribbleBuffer = p5.createGraphics(size.x, size.y, p5.WEBGL);
     scribbleBuffer.setAttributes('alpha', true);
+
+    params.display.frameRate.setValue(24);
+
+    amplitude = new window.p5.Amplitude(0.3);
+    amplitude.setInput(audio);
 
     let modes = [
       p5.BLEND,
@@ -88,8 +115,6 @@ const sketch = p5 => {
 
     canvas.mousePressed(mouseDown);
 
-    p5.frameRate(15);
-
     font = p5.loadFont('fonts/msmincho.otf');
 
     setupGUI();
@@ -99,7 +124,7 @@ const sketch = p5 => {
         showStatusTextCountdown -= 100;
     }, 100);
 
-    resized();
+    setTimeout(resized, 100);
   }
 
   function postProcess() {
@@ -128,35 +153,26 @@ const sketch = p5 => {
     scribbleBuffer.resetShader();
   }
 
+  let frameCounter = 0;
+
   p5.draw = () => {
+    // Update display
     let density = params.display.pixelDensity.get();
     if (density == 0) density = defaultPixelDensity;
     p5.pixelDensity(density);
+    //p5.frameRate(params.display.frameRate.get());
 
-    p5.frameRate(params.display.frameRate.get());
-    p5.background(params.display.backgroundColor.get());
-
-    scribbleBuffer.clear(0,0,0,0);
-    if (!img) {
-      scribbleBuffer.background(params.display.backgroundColor.get());
-    }
-
+    // WebGL Offset
     scribbleBuffer.push();
     scribbleBuffer.translate(-scribbleBuffer.width / 2, -scribbleBuffer.height / 2);
 
-    flowers[0] = createFlower();
-    drawFlowers(scribbleBuffer);
-
-    if (typeof font !== 'undefined' && !img) {
-      scribbleBuffer.textFont(font);
-      scribbleBuffer.fill(params.flower.flowerStroke.get());
-      drawText();
+    frameCounter++;
+    if (frameCounter > (p5.frameRate() / params.display.frameRate.get())) {
+      drawRate();
+      frameCounter = 0;
     }
 
-    if (params.display.postProcess.get()) postProcess();
-
-    p5.clear();
-
+    // Display image & video
     if (img != null) {
       p5.image(img, pos.x, pos.y, size.x, size.y);
       let blend = params.display.blendMode.get();
@@ -164,11 +180,60 @@ const sketch = p5 => {
         -size.x/2, -size.y/2, size.x, size.y, 
         pos.x, pos.y, size.x, size.y, 
         blend);
+    } else if (video != null) {
+      let aspect = video.width / video.height;
+      let w = size.y * aspect;
+
+      //video.time(videoPos);
+      //console.log(videoPos);
+
+      p5.image(video.get(), size.x / 2 - w / 2, pos.y, w, size.y);
+      p5.image(scribbleBuffer, 0, 0, size.x, size.y);
+      /*
+      let blend = params.display.blendMode.get();
+      p5.blend(scribbleBuffer, 
+        -size.x/2, -size.y/2, size.x, size.y, 
+        pos.x, pos.y, size.x, size.y, 
+        blend);
+        */
+
+        /*
+      let deltaSeconds = 1 / p5.frameRate();
+      videoPos += deltaSeconds;
+      videoPos %= video.duration();
+      */
+
     } else {
       p5.image(scribbleBuffer, pos.x, pos.y, size.x, size.y);
     }
 
     scribbleBuffer.pop();
+
+    capturer.capture(canvas.canvas);
+  }
+
+  function drawRate() {
+    // Background
+    scribbleBuffer.clear(0,0,0,0);
+    if (!img && params.display.background.get()) {
+      p5.background(params.display.backgroundColor.get());
+      scribbleBuffer.background(params.display.backgroundColor.get());
+    }
+
+    // Draw Flowers
+    flowers[flowers.length-1] = createFlower();
+    drawFlowers(scribbleBuffer);
+
+    // Draw extra text
+    if (typeof font !== 'undefined' && !img) {
+      scribbleBuffer.textFont(font);
+      scribbleBuffer.fill(params.flower.flowerStroke.get());
+      if (params.text.showExtraText.get()) drawText();
+    }
+
+    // Post process
+    if (params.display.postProcess.get()) postProcess();
+    p5.clear();
   }
 
   function drawText() {
@@ -211,6 +276,13 @@ const sketch = p5 => {
     scribble.numEllipseSteps = 1;
     scribble.bowing = 1;
     scribble.roughness = params.display.scribbleRoughness.get();
+    /*
+    let amp = Math.pow(amplitude.getLevel(), 3) * 60;
+    console.log(amp);
+    scribble.roughness += scribble.roughness * amp;
+    */
+
+    scribble.roughness *= 1+ (Math.pow(amplitude.getLevel(), 3) * 200);
 
     for (var flower of flowers) {
       flower.draw(scribble);
@@ -222,11 +294,10 @@ const sketch = p5 => {
       buffer.stroke(params.text.textColor.get());
       buffer.fill(params.text.textColor.get());
       buffer.textFont(font);
-      buffer.textSize(150);
+      buffer.textSize(params.text.textSize.get());
       buffer.text(params.text.textValue.get(), pos.x + size.x/2, pos.y + size.y/2);
       buffer.pop();
     }
-
   }
 
   p5.windowResized = () => {
@@ -275,9 +346,35 @@ const sketch = p5 => {
   }
 
   p5.keyPressed = () => {
-    if (p5.keyIsDown(p5.ALT)) savePreset(p5.keyCode);
+    if (p5.key == "[") {
+      capturer.start();
+      p5.draw();
+    }
+    else if (p5.key == "]") {
+      capturer.stop();
+      capturer.save();
+    } else if (p5.key == '<') {
+      audio.time(0);
+    } else if (p5.key == ';') {
+      if (audio.isPlaying()) audio.pause()
+      else audio.play();
+    } else if (p5.key == "\\") {
+      params.text.textValue.setValue('');
+    } else if (p5.key == 'Backspace') {
+      params.text.textValue.setValue(
+        params.text.textValue.get().slice(0, -1)
+      )
+    } else {
+      params.text.textValue.setValue(
+        params.text.textValue.get() + p5.key
+      )
+    }
+
+    /*
+    else if (p5.keyIsDown(p5.ALT)) savePreset(p5.keyCode);
     else if (isLetter(p5.key)) loadPreset(p5.keyCode);
-    p5.draw();
+    */
+    //p5.draw();
   }
 
   function isLetter(str) {
@@ -286,6 +383,7 @@ const sketch = p5 => {
 
   function mouseDown() {
     flowerPos = p5.createVector((p5.mouseX - pos.x) / size.x, (p5.mouseY - pos.y) / size.y);
+    flowers.push(createFlower());
     p5.draw();
   }
 
@@ -326,5 +424,4 @@ const sketch = p5 => {
   };
 };
 
-new p5(sketch);
-export default sketch;
+new window.p5(sketch);

@@ -1,5 +1,3 @@
-import p5 from "p5";
-
 class Petal {
     flower = null;
     constructor(pos, size, strokeWeight, showCentre, centreSize, centreOffset, centreFill, centreStroke) {

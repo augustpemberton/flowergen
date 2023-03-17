@@ -42,7 +42,9 @@ let params = {
     unsharpThreshold: new RangedParam("unsharp thresh", 0.4, 0, 10, 0.1),
 
     backgroundColor: new ColorParam("bg color", [222, 222, 222]),
-    frameRate: new RangedParam("fps", 15, 0, 120, 1),
+    background: new BoolParam("background on", true),
+
+    frameRate: new RangedParam("fps", 12, 0, 120, 1),
     pixelDensity: new RangedParam("pixel density", 0, 0, 5, 0.001),
 
     // to be filled by p5 instance
@@ -51,7 +53,9 @@ let params = {
 
   text: {
     showText: new BoolParam("show text", false),
+    showExtraText: new BoolParam("show extra text", false),
     textValue: new Param("text", "imagiro"),
+    textSize: new RangedParam("text size", 0, 0, 250, 1),
     textColor: new ColorParam("text color", [0,0,0])
   }
 }

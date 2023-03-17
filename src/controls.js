@@ -2,7 +2,8 @@ import * as dat from 'dat.gui';
 import { ParamTypes } from "./param"
 
 class Controls {
-    constructor(params) {
+    constructor(p5, params) {
+        this.p5 = p5;
         this.gui = new dat.GUI();
         this.params = params;
 
@@ -50,15 +51,12 @@ class Controls {
                 }
 
                 else {
-                    console.log("unknown param type")
-                    console.log(params);
                     p = folder.add(category, id);
                 }
 
                 if (p) {
                     let ctx = this;
                     p.onFinishChange(() => {ctx.updateURL();});
-                    console.log(p);
                     p.listen();
                 }
             }
@@ -89,8 +87,6 @@ class Controls {
     }
 
     loadState(state) {
-        console.log("loading state: ");
-        console.log(state);
         for (const [key, value] of Object.entries(state)) {
             this.getParam(key).setValue(value);
         }
@@ -104,8 +100,6 @@ class Controls {
             }
         }
 
-        console.log(s);
-
         return s;
     }
 
@@ -118,12 +112,11 @@ class Controls {
 
     updateURL() {
         let s = this.getURLState();
-        console.log(s);
         window.history.pushState(s, 'flower', '?state=' + s);
     }
 
     loadFromURL() {
-        let stateStr = window.p5.getURLParams().state;
+        let stateStr = this.p5.getURLParams().state;
         if (typeof stateStr === 'undefined') return;
 
         this.loadURLState(stateStr);

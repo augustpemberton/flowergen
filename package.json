@@ -31,8 +31,6 @@
     "dat.gui": "^0.7.9",
     "gif.js": "^0.2.0",
     "msgpack-lite": "^0.1.26",
-    "p5": "^1.4.2",
-    "p5.gui.variables": "^1.0.1",
     "quicksettings": "^3.0.1"
   }
 }
