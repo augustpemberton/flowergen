@@ -244,7 +244,7 @@ const sketch = p5 => {
 
     scribbleBuffer.textSize(24);
     scribbleBuffer.text("{letter} to load a flower", size.x - 500, size.y - 100);
-    scribbleBuffer.text("[ALT]+{letter} to save a flower", size.x - 500, size.y - 70);
+    scribbleBuffer.text("[OPTION]+{letter} to save a flower", size.x - 500, size.y - 70);
     if (showStatusTextCountdown > 0)
       scribbleBuffer.text(statusText, 300, size.y - 70);
 
