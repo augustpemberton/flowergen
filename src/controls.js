@@ -87,6 +87,34 @@ class Controls {
     }
 
     loadState(state) {
+        if (state.constructor != Object) {
+            console.log(state);
+            console.log(this.params);
+            const flowerSettings = state[0];
+            const petalSettings = state[1];
+            const centreSettings = state[2];
+            const displaySettings = state[3];
+
+            const flowerSettingsArr = ['flowerSize', 'rotation', 'nPetals', 'flowerStroke', 'flowerFill', 'flowerFillAlpha', 'flowerRandSeed'];
+            for (let i=0; i<flowerSettingsArr.length; i++) {
+                this.getParam(flowerSettingsArr[i]).setValue(flowerSettings[i]);
+            }
+
+            this.getParam('petalOffset').setValue([petalSettings[0], petalSettings[1]]);
+            this.getParam('petalOffsetRand').setValue(petalSettings[2]);
+            this.getParam('petalSize').setValue([petalSettings[3] * 0.8, petalSettings[4] * 0.8]);
+            this.getParam('petalStroke').setValue(petalSettings[5]);
+
+            this.getParam('showCentres').setValue(centreSettings[0]);
+            this.getParam('centreOffset').setValue([centreSettings[1], centreSettings[2]]);
+            this.getParam('centreSize').setValue(centreSettings[3]);
+            // this.getParam('centreStroke').setValue(centreSettings[4]);
+            // this.getParam('centreFill').setValue(centreSettings[5]);
+
+            this.getParam('backgroundColor').setValue(displaySettings[6])
+            return;
+        }
+
         for (const [key, value] of Object.entries(state)) {
             const param = this.getParam(key);
             if (param) param.setValue(value);
