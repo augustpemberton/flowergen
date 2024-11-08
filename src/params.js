@@ -53,7 +53,7 @@ let params = {
 
   text: {
     showText: new BoolParam("show text", false),
-    showExtraText: new BoolParam("show extra text", false),
+    showExtraText: new BoolParam("show extra text", true),
     textValue: new Param("text", "imagiro"),
     textSize: new RangedParam("text size", 0, 0, 250, 1),
     textColor: new ColorParam("text color", [0,0,0])

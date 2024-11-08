@@ -141,6 +141,7 @@ class Controls {
         window.atob(decodeURIComponent(str)))); }
 
     updateURL() {
+        console.log("updating url");
         let s = this.getURLState();
         window.history.pushState(s, 'flower', '?state=' + s);
     }

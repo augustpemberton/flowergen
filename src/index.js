@@ -171,9 +171,9 @@ const sketch = p5 => {
     if (img != null) {
       p5.image(img, pos.x, pos.y, size.x, size.y);
       let blend = params.display.blendMode.get();
-      p5.blend(scribbleBuffer, 
-        -size.x/2, -size.y/2, size.x, size.y, 
-        pos.x, pos.y, size.x, size.y, 
+      p5.blend(scribbleBuffer,
+        -size.x / 2, -size.y / 2, size.x, size.y,
+        pos.x, pos.y, size.x, size.y,
         blend);
     } else if (video != null) {
       let aspect = video.width / video.height;
@@ -192,11 +192,11 @@ const sketch = p5 => {
         blend);
         */
 
-        /*
-      let deltaSeconds = 1 / p5.frameRate();
-      videoPos += deltaSeconds;
-      videoPos %= video.duration();
-      */
+      /*
+    let deltaSeconds = 1 / p5.frameRate();
+    videoPos += deltaSeconds;
+    videoPos %= video.duration();
+    */
 
     } else {
       p5.image(scribbleBuffer, pos.x, pos.y, size.x, size.y);
@@ -207,14 +207,14 @@ const sketch = p5 => {
 
   function drawRate() {
     // Background
-    scribbleBuffer.clear(0,0,0,0);
+    scribbleBuffer.clear(0, 0, 0, 0);
     if (!img && params.display.background.get()) {
       p5.background(params.display.backgroundColor.get());
       scribbleBuffer.background(params.display.backgroundColor.get());
     }
 
     // Draw Flowers
-    flowers[flowers.length-1] = createFlower();
+    flowers[flowers.length - 1] = createFlower();
     drawFlowers(scribbleBuffer);
 
     // Draw extra text
@@ -281,7 +281,7 @@ const sketch = p5 => {
       buffer.fill(params.text.textColor.get());
       buffer.textFont(font);
       buffer.textSize(params.text.textSize.get());
-      buffer.text(params.text.textValue.get(), pos.x + size.x/2, pos.y + size.y/2);
+      buffer.text(params.text.textValue.get(), pos.x + size.x / 2, pos.y + size.y / 2);
       buffer.pop();
     }
   }
@@ -313,21 +313,54 @@ const sketch = p5 => {
     pos.x = padding / 2;
   }
 
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Alt') return;
 
-  function savePreset(keycode) {
-    if (keycode == p5.ALT) return;
-    p5.storeItem("preset" + keycode, controls.getState());
-    showMessage("saved " + String.fromCharCode(keycode));
+    const key = getBaseKey(e);
+    if (e.altKey) {
+      console.log("saving");
+      savePreset(key);
+    } else {
+      loadPreset(key);
+    }
+  });
+
+  // Function to get the base letter from a keyboard event
+  function getBaseKey(event) {
+    // Prevent default to avoid browser shortcuts
+    // event.preventDefault();
+
+    // Get the key from the event
+    let key = event.key;
+
+    // If Alt is pressed and we have a single character
+    if (event.altKey && key.length === 1) {
+      // Convert to uppercase to handle both cases
+      key = key.toUpperCase();
+
+      // Handle special cases where Alt might modify the key
+      if (event.code.startsWith('Key')) {
+        // Use the code property to get the actual letter
+        key = event.code.slice(3);
+      }
+    }
+
+    return key.toLowerCase();
   }
 
-  function loadPreset(keycode) {
-    if (keycode == p5.ALT) return;
-    let preset = p5.getItem("preset" + keycode);
+  function savePreset(key) {
+    console.log("saving", key)
+    p5.storeItem("preset" + key, controls.getState());
+    showMessage("saved " + key);
+  }
+
+  function loadPreset(key) {
+    let preset = p5.getItem("preset" + key);
     if (preset != null) {
       controls.loadState(preset);
-      showMessage("loaded " + String.fromCharCode(keycode));
+      showMessage("loaded " + key);
     } else {
-      showMessage(String.fromCharCode(keycode) + " is empty");
+      showMessage(key + " is empty");
     }
   }
 
@@ -368,7 +401,7 @@ const sketch = p5 => {
 
     let f = new Flower(p5, p5.createVector(pos.x / size.x, pos.y / size.y),
       params.flower.flowerSize.get(), params.flower.rotation.get(),
-      petals, 
+      petals,
       params.flower.flowerFill.get(), params.flower.flowerFillAlpha.get(),
       params.flower.flowerStroke.get(), scribbleBuffer);
 
