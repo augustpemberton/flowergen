@@ -88,7 +88,9 @@ class Controls {
 
     loadState(state) {
         for (const [key, value] of Object.entries(state)) {
-            this.getParam(key).setValue(value);
+            const param = this.getParam(key);
+            if (param) param.setValue(value);
+            else console.log("cant find parameter", key)
         }
     }
 
